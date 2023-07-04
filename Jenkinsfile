@@ -8,34 +8,44 @@ pipeline {
   }
   stages {
     stage('Initialize') {
+      agent none
       steps {
         script {
           try {
             def dockerHome = tool 'docker'
             env.PATH = "${dockerHome}/bin:${env.PATH}"
-            agent {
-              node {
-                label 'docker'
-              }
+            node('docker') {
+              // Your build steps here
             }
           } catch (Exception e) {
-            agent any
             echo "No agents with the 'docker' label are available. Falling back to any available agent."
+            node {
+              // Your build steps here
+            }
           }
         }
       }
     }
     stage('Build') {
+      agent {
+        label 'docker'
+      }
       steps {
         sh 'docker build -t bratvagzp/jenkins-docker-hub .'
       }
     }
     stage('Login') {
+      agent {
+        label 'docker'
+      }
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
       }
     }
     stage('Push') {
+      agent {
+        label 'docker'
+      }
       steps {
         sh 'docker push bratvagzp/jenkins-docker-hub'
       }
