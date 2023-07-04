@@ -13,7 +13,7 @@ pipeline {
           try {
             def dockerHome = tool 'docker'
             env.PATH = "${dockerHome}/bin:${env.PATH}"
-            node('docker') {
+            node {
               // Your build steps here
             }
           } catch (Exception e) {
@@ -26,25 +26,19 @@ pipeline {
       }
     }
     stage('Build') {
-      agent {
-        label 'docker'
-      }
+      agent any
       steps {
         sh 'docker build -t bratvagzp/jenkins-docker-hub .'
       }
     }
     stage('Login') {
-      agent {
-        label 'docker'
-      }
+      agent any
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
       }
     }
     stage('Push') {
-      agent {
-        label 'docker'
-      }
+      agent any
       steps {
         sh 'docker push bratvagzp/jenkins-docker-hub'
       }
