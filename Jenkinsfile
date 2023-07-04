@@ -1,10 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'docker:latest'
-      label 'docker'
-    }
-  }
+  agent none
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
@@ -15,8 +10,18 @@ pipeline {
     stage('Initialize') {
       steps {
         script {
-          def dockerHome = tool 'docker'
-          env.PATH = "${dockerHome}/bin:${env.PATH}"
+          try {
+            def dockerHome = tool 'docker'
+            env.PATH = "${dockerHome}/bin:${env.PATH}"
+            agent {
+              node {
+                label 'docker'
+              }
+            }
+          } catch (Exception e) {
+            agent any
+            echo "No agents with the 'docker' label are available. Falling back to any available agent."
+          }
         }
       }
     }
