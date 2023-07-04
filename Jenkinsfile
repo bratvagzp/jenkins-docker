@@ -7,9 +7,13 @@ pipeline {
     DOCKERHUB_CREDENTIALS = credentials('dockerhub')
   }
   stages {
-    stage('Initialize'){
-        def dockerHome = tool 'docker'
-        env.PATH = "${dockerHome}/bin:${env.PATH}"
+    stage('Initialize') {
+      steps {
+        script {
+          def dockerHome = tool 'docker'
+          env.PATH = "${dockerHome}/bin:${env.PATH}"
+        }
+      }
     }
     stage('Build') {
       steps {
@@ -33,3 +37,4 @@ pipeline {
     }
   }
 }
+
