@@ -17,7 +17,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh 'docker build -t bratvagzp/jenkins-docker .'
+        sh 'docker build -t bratvagzp/jenkins-docker-hub .'
       }
     }
     stage('Login') {
